@@ -1,17 +1,11 @@
 package com.example.webflux.sandbox;
 
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 
@@ -47,9 +41,7 @@ public class SandboxController {
     @GetMapping("/delayedmessages")
     public Flux<Message> delayedMessages() {
         return Flux.just(new Message("Hello"), new Message("World!"))
-                .zipWith(Flux.interval(Duration.ofSeconds(1L)))
-                .map(T -> T.getT1());
-//                .zipWith(Flux.interval(Duration.ofSeconds(1L)), (msg, c) -> msg);
+                .zipWith(Flux.interval(Duration.ofSeconds(1L)), (msg, c) -> msg);
     }
 
     @PostMapping("/echo")
