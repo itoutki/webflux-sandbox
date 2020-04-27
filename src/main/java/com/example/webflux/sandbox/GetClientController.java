@@ -1,8 +1,12 @@
 package com.example.webflux.sandbox;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +22,11 @@ import java.util.ArrayList;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @RestController
-@RequestMapping("/client")
-public class ClientController {
+@RequestMapping("/getclient")
+public class GetClientController {
     private WebClient webClient;
 
-    public ClientController(WebClient webClient) {
+    public GetClientController(WebClient webClient) {
         this.webClient = webClient;
     }
 
@@ -112,51 +116,21 @@ public class ClientController {
                 .map(s -> new Message(s));
     }
 
-    @GetMapping("/post")
-    public Mono<Message> post() {
-        return webClient.post()
-                .uri("http://localhost:8080/echo")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just("hello from client"), String.class)
+    @GetMapping("/cookieheader")
+    public Mono<JsonNode> getCookieHeader() {
+        return webClient.get()
+                .uri("https://httpbin.org/get")
+                .cookie("mycookie", "hello-cookie")
+                .cookies(cookies -> {
+                    cookies.add("mysecondcookie", "hello-cookie2");
+                    cookies.add("mythirdcookie", "hello-cookie3");
+                })
+                .header("myheader", "hello-header")
+                .headers(headers -> {
+                    headers.add("mysecondheader", "hello-header2");
+                    headers.add("mythirdheader", "hello-header3");
+                })
                 .retrieve()
-                .bodyToMono(Message.class);
+                .bodyToMono(JsonNode.class);
     }
-
-    @GetMapping("/postform")
-    public Mono<Message> postForm() {
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("message", "hello from post form");
-        return webClient.post()
-                .uri("http://localhost:8080/echoform")
-//                .body(fromFormData("message", "hello from post form"))
-                .bodyValue(formData)
-                .retrieve()
-                .bodyToMono(Message.class);
-    }
-    
-    @GetMapping("/postflux")
-    public Flux<Message> postFlux() {
-        return webClient.post()
-                .uri("http://localhost:8080/messageflux")
-                .contentType(MediaType.APPLICATION_STREAM_JSON)
-                .accept(MediaType.APPLICATION_STREAM_JSON)
-                .body(Flux.just(new Message("hello"),
-                        new Message("world"),
-                        new Message("from"),
-                        new Message("flux")),
-                        Message.class)
-                .retrieve()
-                .bodyToFlux(Message.class);
-    }
-
-    // TODO GET + event-stream
-    // TODO GET + stream json
-    // TODO POST
-    // TODO POST + event-stream
-    // TODO POST + stream json
-    // TODO Cookie, Header
-
-
-
-
 }

@@ -2,13 +2,17 @@ package com.example.webflux.sandbox;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class SandboxController {
@@ -64,6 +68,15 @@ public class SandboxController {
     @PostMapping("/echoform")
     public Mono<Message> echoForm(Mono<EchoForm> echoForm) {
         return echoForm.map(e -> new Message(e.getMessage()));
+    }
+
+    @PostMapping("/multipart")
+    public Mono<String> multipart(@RequestPart("meta-data") String metadata,
+                                  @RequestPart("file-data") FilePart file) {
+        return file.content().log()
+                .map(buffer -> buffer.toString(Charset.forName("UTF-8")))
+                .collect(Collectors.joining("-"));
+
     }
 }
 
