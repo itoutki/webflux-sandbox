@@ -3,6 +3,8 @@ package com.example.webflux.sandbox;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +14,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+
+import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @RestController
 @RequestMapping("/client")
@@ -23,7 +27,7 @@ public class ClientController {
     }
 
     // Mono(String) API -> bodyToMono OK
-    @GetMapping("/gettext")
+    @GetMapping("/gettextmono")
     public Mono<String> getText() {
         return webClient.get()
                 .uri("http://localhost:8080/text")
@@ -83,7 +87,8 @@ public class ClientController {
     public Flux<String> getDelayedText() {
         return webClient.get()
                 .uri("http://localhost:8080/delayedtexts")
-                .accept(MediaType.TEXT_EVENT_STREAM)
+//                .accept(MediaType.TEXT_EVENT_STREAM)
+                .header("ACCEPT", MediaType.TEXT_EVENT_STREAM_VALUE)
                 .retrieve()
                 .bodyToFlux(String.class);
     }
@@ -115,6 +120,33 @@ public class ClientController {
                 .body(Mono.just("hello from client"), String.class)
                 .retrieve()
                 .bodyToMono(Message.class);
+    }
+
+    @GetMapping("/postform")
+    public Mono<Message> postForm() {
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("message", "hello from post form");
+        return webClient.post()
+                .uri("http://localhost:8080/echoform")
+//                .body(fromFormData("message", "hello from post form"))
+                .bodyValue(formData)
+                .retrieve()
+                .bodyToMono(Message.class);
+    }
+    
+    @GetMapping("/postflux")
+    public Flux<Message> postFlux() {
+        return webClient.post()
+                .uri("http://localhost:8080/messageflux")
+                .contentType(MediaType.APPLICATION_STREAM_JSON)
+                .accept(MediaType.APPLICATION_STREAM_JSON)
+                .body(Flux.just(new Message("hello"),
+                        new Message("world"),
+                        new Message("from"),
+                        new Message("flux")),
+                        Message.class)
+                .retrieve()
+                .bodyToFlux(Message.class);
     }
 
     // TODO GET + event-stream

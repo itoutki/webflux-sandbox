@@ -1,9 +1,9 @@
 package com.example.webflux.sandbox;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -12,6 +12,11 @@ import java.util.List;
 
 @RestController
 public class SandboxController {
+
+    @ModelAttribute
+    public EchoForm initEchoForm() {
+        return new EchoForm();
+    }
 
     @GetMapping("/text")
     public Mono<String> text() {
@@ -48,6 +53,17 @@ public class SandboxController {
     @PostMapping("/echo")
     public Mono<Message> echo(@RequestBody Mono<String> body) {
         return body.map(Message::new);
+    }
+
+    @PostMapping("/messageflux")
+    public Flux<Message> messageFlux(@RequestBody Flux<Message> body) {
+        return body.log().zipWith(Flux.interval(Duration.ofSeconds(1L)),
+                (msg, c) -> new Message(msg.getMessage() + ":" + c));
+    }
+
+    @PostMapping("/echoform")
+    public Mono<Message> echoForm(Mono<EchoForm> echoForm) {
+        return echoForm.map(e -> new Message(e.getMessage()));
     }
 }
 
