@@ -1,25 +1,23 @@
 package com.example.webflux.sandbox;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.netty.handler.timeout.TimeoutException;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import java.util.ArrayList;
-
-import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @RestController
 @RequestMapping("/getclient")
@@ -132,5 +130,39 @@ public class GetClientController {
                 })
                 .retrieve()
                 .bodyToMono(JsonNode.class);
+    }
+
+    @GetMapping("/status")
+    public Mono<JsonNode> status() {
+        Retry retry = Retry.max(3)
+                .filter(e -> e instanceof TimeoutException);
+
+        return webClient.get()
+                .uri("https://httpbin.org/delay/5")
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .retryWhen(retry)
+                .onErrorResume(e -> {
+                    int status = -1;
+                    String message = "unknown error";
+                    if (e instanceof WebClientResponseException) {
+                        WebClientResponseException ee = (WebClientResponseException) e;
+                        status = ee.getRawStatusCode();
+                    }
+
+                    if (e instanceof TimeoutException) {
+                        message = "timeout!!!";
+                    }
+
+                    if (Exceptions.isRetryExhausted(e)) {
+                        message = "retry failed";
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    ObjectNode root = mapper.createObjectNode();
+                    root.put("status", status);
+                    root.put("message", message);
+                    return Mono.just(root);
+                });
     }
 }
