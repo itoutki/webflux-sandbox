@@ -142,27 +142,22 @@ public class GetClientController {
                 .retrieve()
                 .bodyToMono(JsonNode.class)
                 .retryWhen(retry)
-                .onErrorResume(e -> {
-                    int status = -1;
-                    String message = "unknown error";
-                    if (e instanceof WebClientResponseException) {
-                        WebClientResponseException ee = (WebClientResponseException) e;
-                        status = ee.getRawStatusCode();
-                    }
+                .onErrorResume(WebClientResponseException.NotFound.class,
+                        e -> Mono.just(createMessage(e.getRawStatusCode(), e.getMessage())))
+                .onErrorResume(WebClientResponseException.class,
+                        e -> Mono.just(createMessage(e.getRawStatusCode(), e.getMessage())))
+                .onErrorResume(TimeoutException.class,
+                        e -> Mono.just(createMessage(500, "timeout!!!")))
+                .onErrorResume(e -> Exceptions.isRetryExhausted(e),
+                        e -> Mono.just(createMessage(500, "retry failed!!!" + e.getCause().getClass().toGenericString())))
+                .onErrorResume(e -> Mono.just(createMessage(500, "unknown error!!!")));
+    }
 
-                    if (e instanceof TimeoutException) {
-                        message = "timeout!!!";
-                    }
-
-                    if (Exceptions.isRetryExhausted(e)) {
-                        message = "retry failed";
-                    }
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    ObjectNode root = mapper.createObjectNode();
-                    root.put("status", status);
-                    root.put("message", message);
-                    return Mono.just(root);
-                });
+    private JsonNode createMessage(int status, String message) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode root = mapper.createObjectNode();
+        root.put("status", status);
+        root.put("message", message);
+        return root;
     }
 }
