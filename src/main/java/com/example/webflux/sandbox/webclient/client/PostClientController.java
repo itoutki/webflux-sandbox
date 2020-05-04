@@ -19,8 +19,8 @@ import reactor.core.publisher.Mono;
 public class PostClientController {
     private WebClient webClient;
 
-    public PostClientController(WebClient webClient) {
-        this.webClient = webClient;
+    public PostClientController(WebClient.Builder builder) {
+        this.webClient = builder.build();
     }
 
     @GetMapping("/post")

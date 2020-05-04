@@ -25,8 +25,8 @@ import java.util.ArrayList;
 public class GetClientController {
     private WebClient webClient;
 
-    public GetClientController(WebClient webClient) {
-        this.webClient = webClient;
+    public GetClientController(WebClient.Builder builder) {
+        this.webClient = builder.build();
     }
 
     // Mono(String) API -> bodyToMono OK
