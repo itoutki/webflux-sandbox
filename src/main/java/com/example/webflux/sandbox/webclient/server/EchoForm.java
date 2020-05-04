@@ -1,4 +1,4 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.server;
 
 public class EchoForm {
     private String message;

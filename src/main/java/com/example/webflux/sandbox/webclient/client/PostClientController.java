@@ -1,5 +1,6 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.client;
 
+import com.example.webflux.sandbox.webclient.server.Message;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;

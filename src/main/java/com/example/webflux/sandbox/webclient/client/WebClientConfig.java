@@ -1,4 +1,4 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.client;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;

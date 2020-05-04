@@ -1,4 +1,4 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.server;
 
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;

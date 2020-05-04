@@ -1,4 +1,4 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.server;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

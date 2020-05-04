@@ -1,5 +1,6 @@
-package com.example.webflux.sandbox;
+package com.example.webflux.sandbox.webclient.client;
 
+import com.example.webflux.sandbox.webclient.server.Message;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
