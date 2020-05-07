@@ -7,10 +7,12 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
 public class SandboxController {
+    private final Random random = new Random(1);
 
     @ModelAttribute
     public EchoForm initEchoForm() {
@@ -47,6 +49,11 @@ public class SandboxController {
     public Flux<Message> delayedMessages() {
         return Flux.just(new Message("Hello"), new Message("World!"))
                 .zipWith(Flux.interval(Duration.ofSeconds(1L)), (msg, c) -> msg);
+    }
+
+    @GetMapping("/random")
+    public Mono<Integer> random() {
+        return Mono.just(random.nextInt(10));
     }
 
     @PostMapping("/echo")

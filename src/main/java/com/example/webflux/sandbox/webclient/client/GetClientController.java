@@ -133,6 +133,39 @@ public class GetClientController {
                 .bodyToMono(JsonNode.class);
     }
 
+    @GetMapping("/series")
+    public Mono<JsonNode> series() {
+        return randomRequest()
+                .flatMap(i -> delayedRequest(i));
+    }
+
+    // curl http://localhost:8080/getclient/parallelmerge -H 'Accept: text/event-stream;'
+    @GetMapping("/parallelmerge")
+    public Flux<Integer> parallelMerge( ) {
+        return Flux.merge(randomRequest(), randomRequest());
+    }
+
+    // curl http://localhost:8080/getclient/parallelzip -H 'Accept: text/event-stream;'
+    @GetMapping("/parallelzip")
+    public Flux<Integer> parallelZip() {
+        return Flux.zip(randomRequest(), randomRequest())
+                .map(tuple -> tuple.getT1() + tuple.getT2());
+    }
+
+    private Mono<Integer> randomRequest() {
+        return webClient.get()
+                .uri("http://localhost:8080/random")
+                .retrieve()
+                .bodyToMono(Integer.class);
+    }
+
+    private Mono<JsonNode> delayedRequest(int i) {
+        return webClient.get()
+                .uri("https://httpbin.org/delay/" + String.valueOf(i))
+                .retrieve()
+                .bodyToMono(JsonNode.class);
+    }
+
     @GetMapping("/status")
     public Mono<JsonNode> status() {
         Retry retry = Retry.max(3)

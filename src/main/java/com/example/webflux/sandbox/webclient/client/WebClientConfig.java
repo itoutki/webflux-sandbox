@@ -14,10 +14,10 @@ import reactor.netty.tcp.TcpClient;
 @Configuration
 public class WebClientConfig {
 
-    @Bean
-    ReactorResourceFactory reactorResourceFactory() {
-        return new ReactorResourceFactory();
-    }
+//    @Bean
+//    ReactorResourceFactory reactorResourceFactory() {
+//        return new ReactorResourceFactory();
+//    }
 
     @Bean
     ClientHttpConnector clientHttpConnector(ReactorResourceFactory reactorResourceFactory) {
@@ -25,8 +25,8 @@ public class WebClientConfig {
                 .runOn(reactorResourceFactory.getLoopResources())
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
                 .doOnConnected(conn -> conn
-                        .addHandlerLast(new ReadTimeoutHandler(2))
-                        .addHandlerLast(new WriteTimeoutHandler(2)));
+                        .addHandlerLast(new ReadTimeoutHandler(30))
+                        .addHandlerLast(new WriteTimeoutHandler(30)));
         return new ReactorClientHttpConnector(HttpClient.from(tcpClient).metrics(true));
     }
 
