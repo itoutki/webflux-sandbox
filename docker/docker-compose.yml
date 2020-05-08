@@ -1,0 +1,33 @@
+version: '3.8'
+networks:
+  app-network:
+
+services:
+  app:
+    image: webflux-sandbox:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - app
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/jvm-dashboard.json:/var/lib/grafana/dashboards/jvm-dashboard.json
+    depends_on:
+      - prometheus

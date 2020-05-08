@@ -2,4 +2,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: info,prometheus,threaddump,heapdump,env,beans
