@@ -1,7 +1,8 @@
 scrape_configs:
   - job_name: 'spring'
     scrape_interval: 5s
-    static_configs:
-      - targets: ['app:8080']
+    file_sd_configs:
+      - files:
+        - /etc/prometheus/service_discovery.yml
     metrics_path: /actuator/prometheus
 

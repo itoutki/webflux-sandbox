@@ -27,7 +27,7 @@ public class WebClientConfig {
                 .doOnConnected(conn -> conn
                         .addHandlerLast(new ReadTimeoutHandler(30))
                         .addHandlerLast(new WriteTimeoutHandler(30)));
-        return new ReactorClientHttpConnector(HttpClient.from(tcpClient).metrics(true));
+        return new ReactorClientHttpConnector(HttpClient.from(tcpClient).metrics(true, s -> s));
     }
 
 //    @Bean

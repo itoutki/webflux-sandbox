@@ -3,3 +3,9 @@ management:
     web:
       exposure:
         include: info,prometheus,threaddump,heapdump,env,beans
+  metrics:
+    tags:
+      application: ${spring.application.name}
+spring:
+  application:
+    name: webflux-sandbox
