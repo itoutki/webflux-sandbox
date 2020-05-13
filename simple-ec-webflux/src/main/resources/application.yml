@@ -1,0 +1,14 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,prometheus,threaddump,heapdump,env,beans
+  metrics:
+    tags:
+      application: ${spring.application.name}
+spring:
+  application:
+    name: simple-ec-webflux
+server:
+  port: 8081
+
