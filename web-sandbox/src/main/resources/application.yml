@@ -1,0 +1,15 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,prometheus,threaddump,heapdump,env,beans
+  metrics:
+    tags:
+      application: ${spring.application.name}
+spring:
+  application:
+    name: web-sandbox
+server:
+  port: 8080
+
+
