@@ -24,7 +24,7 @@ public class SyncAccountRepository implements AccountRepository {
 
     @Override
     public Optional<Account> findByEmail(String email) {
-        return Optional.of(accounts.get(email));
+        return Optional.ofNullable(accounts.get(email));
     }
 
     @Override
