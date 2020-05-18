@@ -9,3 +9,6 @@ management:
 spring:
   application:
     name: webflux-sandbox
+  thymeleaf:
+    reactive:
+      max-chunk-size: 1024
