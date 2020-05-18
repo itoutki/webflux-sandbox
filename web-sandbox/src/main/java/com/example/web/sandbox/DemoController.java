@@ -47,6 +47,11 @@ public class DemoController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/ex")
+    public String except() {
+        throw new RuntimeException("error!!!");
+    }
+
     @GetMapping("/rtasync")
     public List<JsonNode> getRestTemplateAsync(@RequestParam(name = "n", required = false, defaultValue = "1") int n)
         throws Exception {

@@ -11,5 +11,3 @@ spring:
     name: web-sandbox
 server:
   port: 8080
-
-

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="msg1L" converterClass="com.github.roundrop.logging.logback.OnelineMessageConverter" />
+    <conversionRule conversionWord="ex1L" converterClass="com.github.roundrop.logging.logback.OnelineThrowableProxyConverter" />
+    <conversionRule conversionWord="xEx1L" converterClass="com.github.roundrop.logging.logback.OnelineExtendedThrowableProxyConverter" />
+    <property name="CONSOLE_LOG_PATTERN_JSON" value="{%clr(&quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH:mm:ss.SSS}&quot;,){faint} %clr(&quot;level&quot;:&quot;%p&quot;,) %clr(&quot;pid&quot;:&quot;${PID:- }&quot;,){magenta}%clr(&quot;thead&quot;:&quot;%.15t&quot;,){faint}%clr(&quot;logger&quot;:&quot;%.40logger{39}&quot;,){cyan}&quot;msg&quot;:&quot;%msg1L&quot;, &quot;stacktrace&quot;:&quot;%xEx1L&quot; }%n" />
+    <property name="CONSOLE_LOG_PATTERN_LTSV" value="%clr(timestamp:%d{yyyy-MM-dd HH:mm:ss.SSS}){faint}\t%clr(level:%p)\t%clr(pid:${PID:- }){magenta}\t%clr(thead:%.15t){faint}\t%clr(logger:%.40logger{39}){cyan}\tmsg:%msg1L\tstacktrace:%xEx1L%n" />
+    <!--
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN_JSON}"/>
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN_LTSV}"/>
+    -->
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <springProfile name="default">
+        <root>
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root>
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="staging">
+        <root>
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="production">
+        <root>
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>
