@@ -29,6 +29,6 @@ public class SyncGoodsRepository implements GoodsRepository {
 
     @Override
     public Optional<Goods> findById(String id) {
-        return Optional.of(goodsList.get(id));
+        return Optional.ofNullable(goodsList.get(id));
     }
 }
