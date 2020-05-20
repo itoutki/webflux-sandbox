@@ -1,6 +1,10 @@
 package com.example.web.ec.controller;
 
+import javax.validation.constraints.NotEmpty;
+
 public class LoginForm {
+
+    @NotEmpty
     private String email;
 
     public LoginForm() {
