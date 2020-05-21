@@ -56,7 +56,7 @@ public class LoginController {
 //    }
 
     @PostMapping()
-    public Mono<String> login(@Valid Mono<LoginForm> loginFormMono, Model model) {
+    public Mono<String> login(@Validated Mono<LoginForm> loginFormMono, Model model) {
         return loginFormMono
                 .map(l -> {
                     model.addAttribute("loginForm", l);
