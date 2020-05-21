@@ -11,4 +11,6 @@ spring:
     name: simple-ec-webflux
 server:
   port: 8081
-
+logging:
+  level:
+    root: INFO
