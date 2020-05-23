@@ -34,6 +34,8 @@ public class LoginController {
             @SessionAttribute(name = "flash_loginForm", required = false)
                     LoginForm loginForm,
             Model model, WebSession session, SessionStatus sessionStatus) {
+
+        // emulate flash attributes
         if (bindingResult != null) {
             model.addAttribute("org.springframework.validation.BindingResult.loginForm", bindingResult);
             session.getAttributes().remove("flash_org.springframework.validation.BindingResult.loginForm");
@@ -130,12 +132,12 @@ public class LoginController {
                 .map(a -> "account")
                 // エラーハンドリング
                 // 1. バリデーションエラー
+                // BindingResult,LoginFormを一時的にセッションに格納し、POST-Redirect-GETする
+                // WebFluxではFlashAttributeをサポートしていないので、セッションで代用する
                 .onErrorResume(WebExchangeBindException.class, e -> {
                     logger.warn("validation error");
-                    logger.info("attribute {}{}", BindingResult.MODEL_KEY_PREFIX, e.getObjectName());
                     session.getAttributes().put("flash_" + BindingResult.MODEL_KEY_PREFIX + e.getObjectName(), e.getBindingResult());
                     session.getAttributes().put("flash_" + e.getObjectName(), e.getTarget());
-                    model.addAttribute(BindingResult.MODEL_KEY_PREFIX + e.getObjectName(), e.getBindingResult());
                     return Mono.just("redirect:/login");
                 })
                 // 2. 業務エラー
