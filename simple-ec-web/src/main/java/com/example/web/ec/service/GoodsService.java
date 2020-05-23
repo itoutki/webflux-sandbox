@@ -2,10 +2,12 @@ package com.example.web.ec.service;
 
 import com.example.web.ec.model.Goods;
 import com.example.web.ec.repository.GoodsRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 
+@Service
 public class GoodsService {
     private GoodsRepository goodsRepository;
 
@@ -21,5 +23,9 @@ public class GoodsService {
         }
 
         return goodsList;
+    }
+
+    public Goods findById(String id) {
+        return goodsRepository.findById(id).orElseThrow();
     }
 }

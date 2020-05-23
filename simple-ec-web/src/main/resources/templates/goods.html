@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Simple EC Web - Goods Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css">
+</head>
+<body>
+<h1>Simple EC Web</h1>
+<h3>Goods</h3>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>名前</th>
+            <th>価格</th>
+            <th>個数</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="goodsForm : ${goodsForms}" th:object="${goodsForm}">
+            <td th:text="*{id}">1</td>
+            <td ><a th:href="@{|/goods/*{id}|}" th:text="*{name}">グッズ1</a></td>
+            <td th:text="*{price}">グッズ1</td>
+            <td>
+                <input type="text" id="quantity" name="quantity" th:form="|add_*{id}|" th:value="*{quantity}" />
+            </td>
+            <td>
+                <form th:id="|add_*{id}|" th:action="@{/goods}" method="post">
+                    <input type="hidden" id="id" name="id" th:value="*{id}" />
+                    <input type="hidden" id="name" name="name" th:value="*{name}" />
+                    <input type="hidden" id="price" name="price" th:value="*{price}" />
+                    <input type="submit" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h3>Cart</h3>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>名前</th>
+        <th>個数</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>グッズ1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>グッズ2</td>
+        <td>2</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>グッズ3</td>
+        <td>3</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

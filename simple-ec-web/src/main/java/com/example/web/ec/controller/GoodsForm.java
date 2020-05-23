@@ -1,25 +1,36 @@
-package com.example.web.ec.model;
+package com.example.web.ec.controller;
+
+import com.example.web.ec.model.Goods;
 
 import java.io.Serializable;
 
-public class Goods implements Serializable {
+public class GoodsForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
     private String name;
     private String description;
-    private int categoryId;
     private int price;
+    private int quantity;
 
-    public Goods() {
+
+    public GoodsForm() {
     }
 
-    public Goods(String id, String name, String description, int categoryId, int price) {
+    public GoodsForm(String id, String name, String description, int price, int quantity) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.categoryId = categoryId;
         this.price = price;
+        this.quantity = quantity;
+    }
+
+    public GoodsForm(Goods goods) {
+        this.id = goods.getId();
+        this.name = goods.getName();
+        this.description = goods.getDescription();
+        this.price = goods.getPrice();
+        this.quantity = 0;
     }
 
     public String getId() {
@@ -46,14 +57,6 @@ public class Goods implements Serializable {
         this.description = description;
     }
 
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -62,18 +65,11 @@ public class Goods implements Serializable {
         this.price = price;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Goods goods = (Goods) o;
-
-        return id != null ? id.equals(goods.id) : goods.id == null;
+    public int getQuantity() {
+        return quantity;
     }
 
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
