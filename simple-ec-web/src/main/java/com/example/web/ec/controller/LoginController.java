@@ -22,9 +22,11 @@ public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     private AccountService accountService;
+    private AccountForm accountForm;
 
-    public LoginController(AccountService accountService) {
+    public LoginController(AccountService accountService, AccountForm accountForm) {
         this.accountService = accountService;
+        this.accountForm = accountForm;
     }
 
     @GetMapping
@@ -50,8 +52,8 @@ public class LoginController {
 
         try {
             Account account = accountService.findOne(loginForm.getEmail());
-            model.addAttribute("account", account);
-            return "account";
+            accountForm.setAccount(account);
+            return "redirect:/goods";
         } catch (NoSuchElementException e) {
             logger.warn("no such element exception requested email : {}", loginForm.getEmail());
             redirectAttributes.addFlashAttribute("loginForm", loginForm);

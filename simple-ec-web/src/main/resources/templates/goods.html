@@ -10,7 +10,20 @@
 </head>
 <body>
 <h1>Simple EC Web</h1>
+<nav>
+    <h3>Navigation</h3>
+    <ul>
+        <li th:unless="${account}"><a th:href="@{/login}">ログイン</a></li>
+    </ul>
+</nav>
+<div th:if="${account}">
+    <h3>Current User</h3>
+    <ul>
+        <li th:text="${account.email}"></li>
+    </ul>
+</div>
 <h3>Goods</h3>
+
 <table>
     <thead>
         <tr>
@@ -18,7 +31,7 @@
             <th>名前</th>
             <th>価格</th>
             <th>個数</th>
-            <th></th>
+            <th>-</th>
         </tr>
     </thead>
     <tbody>
@@ -30,11 +43,11 @@
                 <input type="text" id="quantity" name="quantity" th:form="|add_*{id}|" th:value="*{quantity}" />
             </td>
             <td>
-                <form th:id="|add_*{id}|" th:action="@{/goods}" method="post">
+                <form th:id="|add_*{id}|" th:action="@{/goods/add}" method="post">
                     <input type="hidden" id="id" name="id" th:value="*{id}" />
                     <input type="hidden" id="name" name="name" th:value="*{name}" />
                     <input type="hidden" id="price" name="price" th:value="*{price}" />
-                    <input type="submit" />
+                    <input type="submit" value="カートに追加" />
                 </form>
             </td>
         </tr>
@@ -44,27 +57,39 @@
 <table>
     <thead>
     <tr>
-        <th>ID</th>
         <th>名前</th>
         <th>個数</th>
-        <th></th>
+        <th>金額</th>
+        <th>カートから削除</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>1</td>
-        <td>グッズ1</td>
-        <td>1</td>
+    <tr th:each="cartItem : ${cart.cartItems}" th:object="${cartItem}">
+        <td th:text="*{goods.name}"></td>
+        <td th:text="*{quantity}"></td>
+        <td th:text="*{goods.price} * *{quantity}"></td>
+        <td>
+            <form th:action="@{/goods/remove}" method="post">
+                <input type="hidden" id="goodsid" name="id" th:value="*{goods.id}" />
+                <input type="submit" value="カートから削除" />
+            </form>
+        </td>
     </tr>
     <tr>
-        <td>2</td>
-        <td>グッズ2</td>
-        <td>2</td>
+        <td>----</td>
+        <td>----</td>
+        <td>----</td>
+        <td>----</td>
     </tr>
     <tr>
-        <td>3</td>
-        <td>グッズ3</td>
-        <td>3</td>
+        <td>合計金額</td>
+        <td>-</td>
+        <td th:text="${cart.totalAmount}"></td>
+        <td>
+            <form th:action="@{/goods/clear}" method="post">
+                <input type="submit" value="カートをクリア" />
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
