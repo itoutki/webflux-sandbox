@@ -23,7 +23,14 @@
     </ul>
 </div>
 <h3>Goods</h3>
-
+<ul>
+    <li th:if="${quantity_error}" th:text="${quantity_error}"></li>
+</ul>
+<ul>
+    <li><a th:href="@{/goods?category=0}">カテゴリ:0</a></li>
+    <li><a th:href="@{/goods?category=1}">カテゴリ:1</a></li>
+</ul>
+</form>
 <table>
     <thead>
         <tr>
@@ -40,13 +47,13 @@
             <td ><a th:href="@{|/goods/*{id}|}" th:text="*{name}">グッズ1</a></td>
             <td th:text="*{price}">グッズ1</td>
             <td>
-                <input type="text" id="quantity" name="quantity" th:form="|add_*{id}|" th:value="*{quantity}" />
+                <input type="text" th:form="|add_*{id}|" th:name="quantity" th:value="*{quantity}" />
             </td>
             <td>
                 <form th:id="|add_*{id}|" th:action="@{/goods/add}" method="post">
-                    <input type="hidden" id="id" name="id" th:value="*{id}" />
-                    <input type="hidden" id="name" name="name" th:value="*{name}" />
-                    <input type="hidden" id="price" name="price" th:value="*{price}" />
+                    <input type="hidden" th:name="id" th:value="*{id}" />
+                    <input type="hidden" th:name="name" th:value="*{name}" />
+                    <input type="hidden" th:name="price" th:value="*{price}" />
                     <input type="submit" value="カートに追加" />
                 </form>
             </td>

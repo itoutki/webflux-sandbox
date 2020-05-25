@@ -7,7 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Set;
 import java.util.stream.Collector;
@@ -44,12 +48,18 @@ public class GoodsController {
     }
 
     @PostMapping("/add")
-    public String addToCart(GoodsForm goodsForm, Model model) {
+    public String addToCart(@Validated GoodsForm goodsForm, BindingResult bindingResult,
+                            Model model,
+                            RedirectAttributes redirectAttributes) {
         logger.info("request data id: {} name: {} price: {} quantity {}",
                 goodsForm.getId(),
                 goodsForm.getName(),
                 goodsForm.getPrice(),
                 goodsForm.getQuantity());
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("quantity_error", "数量は1以上を指定してください");
+            return "redirect:/goods";
+        }
         Goods goods = goodsService.findById(goodsForm.getId());
         CartItem cartItem = new CartItem();
         cartItem.setGoods(goods);

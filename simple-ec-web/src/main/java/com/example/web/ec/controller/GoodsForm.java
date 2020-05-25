@@ -2,6 +2,7 @@ package com.example.web.ec.controller;
 
 import com.example.web.ec.model.Goods;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 
 public class GoodsForm implements Serializable {
@@ -11,6 +12,8 @@ public class GoodsForm implements Serializable {
     private String name;
     private String description;
     private int price;
+
+    @Min(1)
     private int quantity;
 
 
