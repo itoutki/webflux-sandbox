@@ -1,10 +1,12 @@
 package com.example.webflux.sandbox.thymeleaf;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,7 +17,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/thymeleaf")
 public class ThymeleafController {
-
+    private static final Logger logger = LoggerFactory.getLogger(ThymeleafController.class);
 
 
     @GetMapping("/")
@@ -125,6 +127,52 @@ public class ThymeleafController {
                 .onErrorResume(e -> Mono.just("biglist")).log();
 
         return v;
+    }
+
+    @GetMapping("/sample")
+    public Mono<String> getSample(Model model) {
+        if (!model.containsAttribute("sampleForm")) {
+            model.addAttribute("sampleForm", new SampleForm());
+        }
+        return Mono.just("sample");
+    }
+
+    @PostMapping("/sample1")
+    public Mono<String> postSample1(@ModelAttribute SampleForm sampleForm, Model model) {
+        logger.info(model.toString());
+        return Mono.just("redirect:/thymeleaf/sample");
+    }
+
+    @PostMapping("/sample2")
+    public Mono<String> postSample2(@Validated @ModelAttribute Mono<SampleForm> sampleForm, Model model) {
+        logger.info(model.toString());
+        return sampleForm
+                .then(Mono.just("redirect:/thymeleaf/sample"))
+                .onErrorResume(WebExchangeBindException.class,
+                        e -> {
+                            logger.info("model : {}", model);
+                            logger.info("bindingResult : {}", e.getBindingResult());
+                            logger.info("objectName : {}", e.getObjectName());
+                            return Mono.just("redirect:/thymeleaf/sample");
+                        });
+    }
+
+    @PostMapping("/sample3")
+    public Mono<String> postSample3(@Validated @ModelAttribute("sample") SampleForm sampleForm, Model model) {
+        logger.info(model.toString());
+        return Mono.just("redirect:/thymeleaf/sample");
+    }
+
+    @PostMapping("/sample4")
+    public Mono<String> postSample4(@Validated @ModelAttribute("sample") Mono<SampleForm> sampleForm, Model model) {
+        logger.info(model.toString());
+        return sampleForm
+                .then(Mono.just("redirect:/thymeleaf/sample"))
+                .onErrorResume(WebExchangeBindException.class,
+                        e -> {
+                            logger.info(e.getObjectName());
+                            return Mono.just("redirect:/thymeleaf/sample");
+                        });
     }
 
     public Flux<Account> getFlux(String param) {
