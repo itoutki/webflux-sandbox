@@ -1,0 +1,24 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+    metrics:
+      tags:
+        application: ${spring.application.name}
+
+spring:
+  application:
+    name: webflux-r2dbc
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/perf
+    username: root
+    password: mysql
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          r2dbc:
+            core: DEBUG
