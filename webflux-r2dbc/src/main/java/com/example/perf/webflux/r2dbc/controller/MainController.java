@@ -33,23 +33,17 @@ public class MainController {
 
     @GetMapping("/delay/{seconds}")
     public Mono<ObjectNode> delay(@PathVariable("seconds") int seconds) {
-        logger.info("delay start.");
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         root.put("message", "Hello, World!");
-        return Mono.just(root).delayElement(Duration.ofSeconds(seconds))
-                .doOnSuccess((node) -> {
-                    logger.info("delay end.");
-                });
+        return Mono.just(root).delayElement(Duration.ofSeconds(seconds));
     }
 
     @GetMapping("/select")
     public Flux<Person> select() {
         return databaseClient.execute("SELECT id, name FROM person")
                 .as(Person.class)
-                .fetch().all()
-                .doOnSubscribe(s -> logger.info("select start."))
-                .doOnComplete(() -> logger.info("select end."));
+                .fetch().all();
     }
 
     @GetMapping("/select/{id}")
@@ -58,9 +52,8 @@ public class MainController {
                 .bind("id", id)
                 .as(Person.class)
                 .fetch()
-                .first()
-                .doOnSubscribe(s -> logger.info("get for id {} start.", id))
-                .doOnSubscribe(p -> logger.info("get for id {} end.", id));
+                .first();
+
     }
 
     @PostMapping("/insert")
@@ -74,9 +67,7 @@ public class MainController {
                     ObjectNode root = mapper.createObjectNode();
                     root.put("message", String.format("%d data is inserted.", count));
                     return root;
-                })
-                .doOnSubscribe(s -> logger.info("insert start."))
-                .doOnSuccess(n -> logger.info("insert end."));
+                });
     }
 
     @PostMapping("/update")
@@ -86,8 +77,6 @@ public class MainController {
                 .bind("id", person.getId())
                 .fetch()
                 .rowsUpdated()
-                .then(Mono.just(person))
-                .doOnSubscribe(s -> logger.info("update start."))
-                .doOnSuccess(p -> logger.info("update end."));
+                .then(Mono.just(person));
     }
 }

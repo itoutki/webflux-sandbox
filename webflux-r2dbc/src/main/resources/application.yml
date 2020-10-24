@@ -17,8 +17,4 @@ spring:
 
 logging:
   level:
-    org:
-      springframework:
-        data:
-          r2dbc:
-            core: DEBUG
+    root: INFO
