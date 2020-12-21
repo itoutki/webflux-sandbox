@@ -1,7 +1,10 @@
 package com.example.perf.webflux.r2dbc.model;
 
+import org.springframework.data.annotation.Id;
+
 public class Person {
 
+    @Id
     private int id;
     private String name;
 
