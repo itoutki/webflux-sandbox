@@ -29,63 +29,63 @@ public class MainController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         root.put("message", "Hello, World!");
-        logger.info("home end   : response => {}", root.toString());
         return root;
     }
 
-    @GetMapping("/delay/{second}")
-    public JsonNode delay(@PathVariable("second") int second) {
-        logger.info("delay start. wait {} sec", second);
+    @GetMapping("/delay/{millis}")
+    public JsonNode delay(@PathVariable("millis") int millis) {
         try {
-            Thread.sleep(second * 1000);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
-        root.put("message", String.format("wait %d sec", second));
-        logger.info("delay end   : response => {}", root.toString());
         return root;
     }
 
     @GetMapping("/select")
     public List<Person> select() {
-        logger.info("select start.");
+        long start = System.currentTimeMillis();
         RowMapper<Person> rowMapper = new BeanPropertyRowMapper<>(Person.class);
 
         List<Person> result = jdbcTemplate.query("SELECT id, name FROM person", rowMapper);
-        logger.info("select end.");
+        long end = System.currentTimeMillis();
+        logger.info("select end. {} ms", end - start);
         return result;
     }
 
     @GetMapping("/select/{id}")
     public Person get(@PathVariable("id") int id) {
-        logger.info("select for id {} start.", id);
+        long start = System.currentTimeMillis();
         RowMapper<Person> personRowMapper = new BeanPropertyRowMapper<>(Person.class);
 
         Person result = jdbcTemplate.queryForObject("SELECT * FROM person WHERE id = ? ", personRowMapper, id);
-        logger.info("select for id {} end.", id);
+        long end = System.currentTimeMillis();
+        logger.info("select for id {} end. {} ms", id, end - start);
         return result;
     }
 
     @PostMapping("/insert")
     public JsonNode insert(@RequestBody Person person) {
-        logger.info("insert start.");
+        long start = System.currentTimeMillis();
         int result = jdbcTemplate.update("INSERT INTO person (name) VALUES (?)", person.getName());
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         root.put("message", String.format("%d data is inserted.", result));
-        logger.info("insert end.");
+        long end = System.currentTimeMillis();
+        logger.info("insert end. {} ms", end - start);
         return root;
     }
 
     @PostMapping("/update")
     public Person update(@RequestBody Person person) {
-        logger.info("update start.");
+        long start = System.currentTimeMillis();
 
         jdbcTemplate.update("UPDATE person SET name = ? WHERE id = ?", person.getName(), person.getId());
 
-        logger.info("update end.");
+        long end = System.currentTimeMillis();
+        logger.info("update end. {} ms", end - start);
         return person;
     }
 }
