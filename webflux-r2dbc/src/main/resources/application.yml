@@ -14,6 +14,10 @@ spring:
     url: r2dbc:mysql://localhost:3306/perf
     username: root
     password: mysql
+    pool:
+      max-size: 100
+  jmx:
+    enabled=true
 
 logging:
   level:

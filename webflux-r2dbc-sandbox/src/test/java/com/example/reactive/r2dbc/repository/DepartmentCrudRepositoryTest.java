@@ -17,4 +17,11 @@ public class DepartmentCrudRepositoryTest {
                 .expectNextCount(4)
                 .verifyComplete();
     }
+
+    @Test
+    void testFindByName() throws Exception {
+        StepVerifier.create(repository.findByName("sales"))
+                .expectNextCount(1)
+                .verifyComplete();
+    }
 }

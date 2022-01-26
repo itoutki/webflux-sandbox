@@ -2,6 +2,7 @@ package com.example.reactive.r2dbc.repository;
 
 import com.example.reactive.r2dbc.model.Department;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,10 +33,14 @@ public class DepartmentEntityTemplateRepository {
     }
 
     public Flux<Department> findByName(String name) {
-        return template.select(
-                query(where("name").is(name))
-                .sort(by(desc("id"))),
-                Department.class);
+        return template.select(Department.class)
+                .from("department")
+                .matching(query(where("name").is(name)).sort(by(desc("id"))))
+                .all();
+//        return template.select(
+//                query(where("name").is(name))
+//                .sort(by(desc("id"))),
+//                Department.class);
     }
 
     public Mono<Department> insert(Department department) {
@@ -44,14 +49,17 @@ public class DepartmentEntityTemplateRepository {
                 .using(department);
     }
 
-    public Mono<Department> updateById(Department department) {
+    public Mono<Integer> updateById(Department department) {
         return template.update(Department.class)
+                .inTable("department")
                 .matching(query(where("id").is(department.getId())))
-                .apply(update("name", department.getName()))
-                .thenReturn(department);
+                .apply(update("name", department.getName()));
     }
 
-    public Mono<Department> deleteById(Department department) {
-        return template.delete(department);
+    public Mono<Integer> deleteById(Department department) {
+        return template.delete(Department.class)
+                .from("department")
+                .matching(query(where("id").is(department.getId())))
+                .all();
     }
 }
